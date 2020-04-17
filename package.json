@@ -1,0 +1,18 @@
+{
+  "name": "radelphonenumberverificationapi",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "test": "node test",
+    "start": "node app.js"
+  },
+  "author": "deedat",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "express": "^4.17.1",
+    "moment": "^2.24.0",
+    "nexmo": "^2.6.0",
+    "nodemon": "^2.0.3"
+  }
+}
