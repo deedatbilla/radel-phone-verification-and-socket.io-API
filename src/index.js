@@ -4,7 +4,7 @@ lib.Configuration.userId = "billa5"; // Your user ID master key => 6BCTdFElqLI9w
 lib.Configuration.apiKey = "y2ycIah2jtDkTrRqfFU8tQHiaudXM4vwFu26hBZlXW1K2CGd";
 
 const router = express.Router();
-router.get((req, res) => {
+router.get("/",(req, res) => {
     res.send({message:success})
 });
 router.post("/getLocationDetails/", async (req, res) => {
