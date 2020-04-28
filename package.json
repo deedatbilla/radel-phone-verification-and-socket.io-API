@@ -13,6 +13,8 @@
     "express": "^4.17.1",
     "moment": "^2.24.0",
     "nexmo": "^2.6.0",
-    "nodemon": "^2.0.3"
+    "nodemon": "^2.0.3",
+    "socket.io": "^2.3.0",
+    "socket.io-client": "^2.3.0"
   }
 }

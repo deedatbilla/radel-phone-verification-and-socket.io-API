@@ -5,8 +5,10 @@ lib.Configuration.apiKey = "y2ycIah2jtDkTrRqfFU8tQHiaudXM4vwFu26hBZlXW1K2CGd";
 
 const router = express.Router();
 router.get("/",(req, res) => {
-    res.send({message:success})
+    res.sendFile(__dirname + '/index.html');
 });
+
+
 router.post("/getLocationDetails/", async (req, res) => {
   try {
     var controller = lib.Geolocation;
