@@ -7,19 +7,53 @@ const router = express.Router();
 const port = process.env.PORT;
 //const port = 3000;
 server.listen(port, () => console.log("server running on port:" + port));
-router.post("/sendMyLocation", async (req, res) => {
-  const { longitude, latitude, riderEmail } = req.body;
-  res.send("socket started");
-  io.on("connection", (socket) => {
-    socket.emit("clientlocation - " + riderEmail, { mylocation: "hj" });
+// router.post("/sendUserLocation", async (req, res) => {
+//   const { longitude, latitude, riderEmail } = req.body;
+//   res.send("socket started");
+//   io.on("connection", (socket) => {
+//     //send user's location to rider
+//     socket.emit("clientlocation - " + riderEmail, { Userlocation: req.body });
+//     socket.on("return my location", (data) => {
+//       console.log(data);
+//       //res.send(req.body);
+//     });
+//   });
+// });
 
-    socket.on("return my location", (data) => {
-      console.log(data);
-      res.send(req.body);
-    });
+// router.post("/sendRiderLocation", async (req, res) => {
+//   const { longitude, latitude, userEmail } = req.body;
+//   res.send("socket started");
+//   io.on("connection", (socket) => {
+//     //send the rider's location to user
+//     socket.emit("riderlocation - " + userEmail, { Riderlocation: req.body });
+
+//     socket.on("return my location", (data) => {
+//       console.log(data);
+//       //res.send(req.body);
+//     });
+//   });
+// });
+
+io.on("connection", (socket) => {
+  console.log("rider new location");
+  socket.on("Allriderlocation", (data) => {
+    socket.emit("Allriderlocation", data);
   });
 });
+
+// router.get("/GetAllRiderLocations", async (req, res) => {
+//   res.send("socket started");
+//   io.on("connection", (socket) => {
+//     //send the rider's location to user
+//     socket.emit("Allriderlocation", {
+//       latitude: latitude,
+//       longitude: longitude,
+//     });
+//     // socket.on("return my location", (data) => {
+//     //   console.log(data);
+//     //   //res.send(req.body);
+//     // });
+//   });
+// });
 app.use(express.json());
-app.use(router);
-
-
+//app.use(router);
