@@ -36,10 +36,11 @@ server.listen(port, () => console.log("server running on port:" + port));
 
 io.on("connection", (socket) => {
   console.log("rider new location");
+  socket.emit("Allriderlocation", { uu: "dsfhjdj" });
   socket.on("Allriderlocation", (data) => {
-    console.log("testing")
-    socket.emit("Allriderlocation", data);
-    console.log("log all " +JSON.stringify(data))
+    console.log("testing");
+
+    console.log("log all " + JSON.stringify(data));
   });
 });
 
