@@ -37,8 +37,7 @@ server.listen(port, () => console.log("server running on port:" + port));
 io.on("connection", (socket) => {
   socket.emit("message", { message: "you are connected" });
   socket.on("Allriderlocation", (data) => {
-    console.log("testing");
-    socket.emit("Allriderlocation", data);
+    socket.emit("riderDetails", data);
     console.log("log all " + JSON.stringify(data));
   });
 });
