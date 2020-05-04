@@ -38,7 +38,7 @@ io.on("connection", (socket) => {
   console.log("rider new location");
   socket.on("Allriderlocation", (data) => {
     console.log("testing")
-    socket.emit("Allriderlocation", data);
+    socket.emit("check", data);
     console.log("log all " +JSON.stringify(data))
   });
 });
