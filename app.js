@@ -34,13 +34,35 @@ server.listen(port, () => console.log("server running on port:" + port));
 //   });
 // });
 
+//broadcast all rider location to user
 io.on("connection", (socket) => {
-  socket.emit("message", { message: "you are connected" });
   socket.on("Allriderlocation", (data) => {
     socket.broadcast.emit("riderDetails", data);
     console.log("log all " + JSON.stringify(data));
   });
+  //user hails a ride
+  // user emits and rider listens for event
+  socket.on("hailride", (data) => {
+    socket.broadcast.emit("hailride-" + data.riderEmail, data);
+    console.log("log all " + JSON.stringify(data));
+  });
+
+  // rider accepts or decline ride request
+  //rider emits and user listens for event
+  socket.on("riderChoice", (data) => {
+    socket.broadcast.emit("riderChoice-" + data.userEmail, data);
+    console.log("log all " + JSON.stringify(data));
+  });
+
+  //track rider location
+  //rider always emits new location and the user listens to location change events
+  socket.on("myRiderLocation", (data) => {
+    socket.broadcast.emit("myRiderLocation-" + data.userEmail, data);
+    console.log("log all " + JSON.stringify(data));
+  });
 });
+
+//user hail ride
 
 // router.get("/GetAllRiderLocations", async (req, res) => {
 //   res.send("socket started");
