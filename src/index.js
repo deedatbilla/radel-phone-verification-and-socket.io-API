@@ -1,61 +1,36 @@
 const express = require("express");
-const lib = require("../lib");
-lib.Configuration.userId = "billa5"; // Your user ID master key => 6BCTdFElqLI9wREPUd8JN3vkMIkYG8ZiZe9gJu3GsykH6cKf
-lib.Configuration.apiKey = "y2ycIah2jtDkTrRqfFU8tQHiaudXM4vwFu26hBZlXW1K2CGd";
+require("dotenv").config();
+var accountSid = process.env.TWILIO_ACCOUNT_SID; // Your Account SID from www.twilio.com/console
+var authToken = process.env.TWILIO_AUTH_TOKEN; // Your Auth Token from www.twilio.com/console
+
+const client = require("twilio")(
+  "AC64359fabefc2d179db216becb172e971",
+  "7aba78b749c445b0ac61fe54cd32f7a9"
+);
 
 const router = express.Router();
-router.get("/",(req, res) => {
-    res.sendFile(__dirname + '/index.html');
+router.get("/", (req, res) => {
+  res.sendFile("./index.html");
 });
 
-
-router.post("/getLocationDetails/", async (req, res) => {
+router.post("/verifyPhone", async (req, res) => {
   try {
-    var controller = lib.Geolocation;
+    let code = Math.floor(1000 + Math.random() * 9000);
+    const { phone } = req.body;
+    let verification = await client.messages
+      .create({
+        body: `Your verification code is ${code}`,
+        from: "+17243906302",
+        to: `+233${phone}`,
+      })
+      .then((message) => res.send({ message,code:code }));
 
-    // await controller.sMSMessage("233546055647", 6, 235343, 800, "GH", "en");
-    //res.send({ message: "success" });
-    //5.65202656  -0.21375904
-    const LATITUDE = req.body.latitude;
-    const LONGITUDE = req.body.longitude;
-    const resp = await controller.geocodeReverse(LATITUDE, LONGITUDE, function (
-      error,
-      response,
-      context
-    ) {
-      console.log(response, context, error);
-    });
-    res.send({ resp });
-
-    // var securityCode = 'security-code';
-
-    // controller.verifySecurityCode(securityCode, function(error, response, context) {
-
-    // });
+    // .verifications.create({ to: `+233${phone}`, channel: "sms" })
+    // .then((verification) => console.log(verification.sid));
   } catch (e) {
-    console.log(e);
+    console.log(e.message);
+    res.status(500).send(e);
   }
 });
-
-router.post("/getLglt", async (req, res) => {
-  try {
-    var controller = lib.Geolocation;
-
-    var address = req.body.address;
-    var countryCode = "GH";
-    var languageCode = "en";
-    var fuzzySearch = false;
-
-    const resp = await controller.geocodeAddress(
-      address,
-      countryCode,
-      languageCode,
-      fuzzySearch,
-      function (error, response, context) {}
-    );
-    res.send({ resp });
-  } catch (e) {
-    console.log(e);
-  }
-});
+ 
 module.exports = router;
