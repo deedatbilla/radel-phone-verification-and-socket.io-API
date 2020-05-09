@@ -17,7 +17,7 @@ io.on("connection", (socket) => {
   socket.on("new-rider", (riderData) => {
     riders[socket.id] = riderData.riderid;
     socket.broadcast.emit("online-riders", riderData);
-    console.log("new rider joined")
+    console.log("new rider joined " +riderData )
   });
 
   // save user details to on the server
@@ -36,7 +36,7 @@ io.on("connection", (socket) => {
       "listening-for-requests",
       requestDetails
     );
-  }); 
+  });  
 
   //the user listens for a decision from the rider
   socket.on("request-decision", (decisionData) => {
