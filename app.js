@@ -4,37 +4,48 @@ const server = require("http").Server(app);
 const io = require("socket.io")(server);
 const phoneVerificationRouter = require("./src");
 const router = express.Router();
-require('dotenv').config()
+require("dotenv").config();
 const port = process.env.PORT;
+const users = {};
+const riders = {};
 //const port = 3000;
 server.listen(port, () => console.log("server running on port:" + port));
 
-//broadcast all rider location to user
 io.on("connection", (socket) => {
-  socket.on("Allriderlocation", (data) => {
-    socket.broadcast.emit("riderDetails", data);
-    console.log("log all " + JSON.stringify(data));
-  });
-  //user hails a ride
-  // user emits and rider listens for event
-  socket.on("hailride", (data) => {
-    socket.broadcast.emit("hailride-" + data.riderEmail, data);
-    console.log("log all " + JSON.stringify(data));
+  //broadcast logged in riders to users
+  //users will listen(on) and riders will emit their location data on this channel
+  socket.on("new-rider", (riderData) => {
+    riders[socket.id] = riderData.riderid;
+    socket.broadcast.emit("new-rider", riderData);
   });
 
-  // rider accepts or decline ride request
-  //rider emits and user listens for event
-  socket.on("riderChoice", (data) => {
-    socket.broadcast.emit("riderChoice-" + data.userEmail, data);
-    console.log("log all " + JSON.stringify(data));
+  // save user details to on the server
+  socket.on("new-user", (userData) => {
+    users[socket.id] = userData.userid;
   });
 
-  //track rider location
-  //rider always emits new location and the user listens to location change events
-  socket.on("myRiderLocation", (data) => {
-    socket.broadcast.emit("myRiderLocation-" + data.userEmail, data);
-    console.log("log all " + JSON.stringify(data));
+  //the user emits a request with th details of the selected rider
+  //the rider is then sent an event to accept or decline the rider
+  //the rider listens to this event
+  //this request data should include the users unique id so that he can get a reply
+  socket.on("request-ride", (requestDetails) => {
+    io.to(riders[requestDetails.riderid]).emit(
+      "listening-for-requests",
+      requestDetails
+    );
   });
+
+  //the user listens for a decision from the rider
+  socket.on("request-decision", (decisionData) => {
+    io.to(users[decisionData.userid]).emit("rider-decision", decisionData);
+  });
+
+
+  //if rider accepts the rider we want to send real time tracking data from the rider to the user
+
+  socket.on("track-rider",riderTrackingData=>{
+    io.to(users[riderTrackingData.userid]).emit("tracking-data",riderTrackingData)
+  })
 });
 
 app.use(express.json());

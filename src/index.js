@@ -23,8 +23,9 @@ router.post("/verifyPhone", async (req, res) => {
         from: "+17243906302",
         to: `+233${phone}`,
       })
-      .then((message) => res.send({ message,code:`${code}` }));
+      .then((message) => res.send({ message, code: `${code}` }));
 
+      
     // .verifications.create({ to: `+233${phone}`, channel: "sms" })
     // .then((verification) => console.log(verification.sid));
   } catch (e) {
@@ -32,5 +33,5 @@ router.post("/verifyPhone", async (req, res) => {
     res.status(500).send(e);
   }
 });
- 
+
 module.exports = router;
