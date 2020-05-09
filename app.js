@@ -16,12 +16,14 @@ io.on("connection", (socket) => {
   //users will listen(on) and riders will emit their location data on this channel
   socket.on("new-rider", (riderData) => {
     riders[socket.id] = riderData.riderid;
-    socket.broadcast.emit("new-rider", riderData);
+    socket.broadcast.emit("online-riders", riderData);
+    console.log("new rider joined")
   });
 
   // save user details to on the server
   socket.on("new-user", (userData) => {
     users[socket.id] = userData.userid;
+    console.log("new user joined")
   });
 
   //the user emits a request with th details of the selected rider
