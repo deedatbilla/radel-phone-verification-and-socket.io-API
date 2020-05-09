@@ -6,24 +6,25 @@ const phoneVerificationRouter = require("./src");
 const router = express.Router();
 require("dotenv").config();
 const port = process.env.PORT;
-const users = {};
-const riders = {};
+
 //const port = 3000;
 server.listen(port, () => console.log("server running on port:" + port));
 
 io.on("connection", (socket) => {
+  const users = [];
+  const riders = [];
   //broadcast logged in riders to users
   //users will listen(on) and riders will emit their location data on this channel
   socket.on("new-rider", (riderData) => {
     riders[socket.id] = riderData.riderid;
-    socket.broadcast.emit("online-riders", riderData);
+    socket.broadcast.emit("online-riders", riders[socket.id]);
     console.log("new rider joined " + JSON.stringify(riderData));
   });
 
   // save user details to on the server
   socket.on("new-user", (userData) => {
     users[socket.id] = userData.userid;
-    console.log("new user joined");
+    console.log(users[socket.id]+" new user joined");
   });
 
   //the user emits a request with th details of the selected rider
@@ -37,10 +38,9 @@ io.on("connection", (socket) => {
         " to " +
         riders[requestDetails.riderid]
     );
-    socket.to(riders[requestDetails.riderid]).emit(
-      "listening-for-requests",
-      requestDetails
-    );
+    socket
+      .to(riders[requestDetails.riderid])
+      .emit("listening-for-requests", requestDetails);
   });
 
   //the user listens for a decision from the rider
@@ -52,10 +52,9 @@ io.on("connection", (socket) => {
   //if rider accepts the rider we want to send real time tracking data from the rider to the user
 
   socket.on("track-rider", (riderTrackingData) => {
-    socket.to(users[riderTrackingData.userid]).emit(
-      "tracking-data",
-      riderTrackingData
-    );
+    socket
+      .to(users[riderTrackingData.userid])
+      .emit("tracking-data", riderTrackingData);
   });
 });
 
