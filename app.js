@@ -17,7 +17,7 @@ io.on("connection", (socket) => {
   socket.on("new-rider", (riderData) => {
     riders[socket.id] = riderData.riderid;
     socket.broadcast.emit("online-riders", riderData);
-    console.log("new rider joined " +riderData )
+    console.log("new rider joined " +JSON.stringify(riderData) )
   });
 
   // save user details to on the server
