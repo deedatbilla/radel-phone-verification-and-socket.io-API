@@ -31,14 +31,16 @@ io.on("connection", (socket) => {
   //the rider listens to this event
   //this request data should include the users unique id so that he can get a reply
   socket.on("request-ride", (requestDetails) => {
+    console.log("rider requested from " +requestDetails.userid +" to "+ requestDetails.riderid )
     io.to(riders[requestDetails.riderid]).emit(
       "listening-for-requests",
       requestDetails
     );
-  });
+  }); 
 
   //the user listens for a decision from the rider
   socket.on("request-decision", (decisionData) => {
+    console.log("rider decision" +decisionData)
     io.to(users[decisionData.userid]).emit("rider-decision", decisionData);
   });
 
