@@ -35,7 +35,7 @@ io.on("connection", (socket) => {
       "rider requested from " +
         requestDetails.userid +
         " to " +
-        JSON.stringify(requestDetails)
+        riders[requestDetails.riderid]
     );
     socket.to(riders[requestDetails.riderid]).emit(
       "listening-for-requests",
