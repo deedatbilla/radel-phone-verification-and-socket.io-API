@@ -37,7 +37,7 @@ io.on("connection", (socket) => {
         " to " +
         JSON.stringify(requestDetails)
     );
-    io.to(riders[requestDetails.riderid]).emit(
+    socket.to(riders[requestDetails.riderid]).emit(
       "listening-for-requests",
       requestDetails
     );
@@ -46,13 +46,13 @@ io.on("connection", (socket) => {
   //the user listens for a decision from the rider
   socket.on("request-decision", (decisionData) => {
     console.log("rider decision" + decisionData);
-    io.to(users[decisionData.userid]).emit("rider-decision", decisionData);
+    socket.to(users[decisionData.userid]).emit("rider-decision", decisionData);
   });
 
   //if rider accepts the rider we want to send real time tracking data from the rider to the user
 
   socket.on("track-rider", (riderTrackingData) => {
-    io.to(users[riderTrackingData.userid]).emit(
+    socket.to(users[riderTrackingData.userid]).emit(
       "tracking-data",
       riderTrackingData
     );
