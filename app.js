@@ -9,23 +9,24 @@ const port = process.env.PORT;
 
 //const port = 3000;
 server.listen(port, () => console.log("server running on port:" + port));
-
+const users = {};
+const riders = {};
 io.on("connection", (socket) => {
-  const users = [];
-  const riders = [];
   //broadcast logged in riders to users
   //users will listen(on) and riders will emit their location data on this channel
   socket.on("new-rider", (riderData) => {
-    riders[socket.id] = riderData.riderid;
+    riders[riderData.riderid] = socket.id;
     socket.broadcast.emit("online-riders", riderData);
-    console.log("new rider joined " + riders[socket.id]);
+    console.log("new rider joined " + JSON.stringify(riderData));
   });
 
   // save user details to on the server
   socket.on("new-user", (userData) => {
-    users[socket.id] = userData.userid;
-    console.log(users[socket.id]+" new user joined");
+    users[userData.userid] = socket.id;
+    socket.broadcast.emit("user-joined", JSON.stringify(userData));
+    console.log(users[userData.userid] + " new user joined");
   });
+  socket.broadcast.emit("all", { riders: riders, users: users });
 
   //the user emits a request with th details of the selected rider
   //the rider is then sent an event to accept or decline the rider
@@ -36,7 +37,9 @@ io.on("connection", (socket) => {
       "rider requested from " +
         requestDetails.userid +
         " to " +
-        riders[requestDetails.riderid]
+        riders[requestDetails.riderid] +
+        "obj" +
+        JSON.stringify(riders)
     );
     socket
       .to(riders[requestDetails.riderid])
@@ -45,7 +48,7 @@ io.on("connection", (socket) => {
 
   //the user listens for a decision from the rider
   socket.on("request-decision", (decisionData) => {
-    console.log("rider decision" + decisionData);
+    console.log("rider decision" + JSON.stringify(decisionData));
     socket.to(users[decisionData.userid]).emit("rider-decision", decisionData);
   });
 
@@ -56,7 +59,16 @@ io.on("connection", (socket) => {
       .to(users[riderTrackingData.userid])
       .emit("tracking-data", riderTrackingData);
   });
-});
 
+  // socket.on("disconnect", (reason) => {
+  //   if (reason.userid) {
+  //     delete users[reason.userid];
+  //   } else {
+  //     delete riders[reason.riderid];
+  //   } 
+  //   console.log("logged out");
+  // });
+}); 
+app.use(express.static("src"));
 app.use(express.json());
 app.use(phoneVerificationRouter);
