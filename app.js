@@ -76,10 +76,11 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", (reason) => {
-    if (reason.userid) {
+    console.log(reason.userid +"test disconnected");
+    if (reason.user) {
       console.log(reason.userid +"user disconnected");
       delete users[reason.userid];
-    } else {
+    } else if(reason.rider) {
       console.log(reason.riderid +" rider disconnected");
       delete riders[reason.riderid];
     }
