@@ -24,7 +24,7 @@ io.on("connection", (socket) => {
   socket.on("new-user", (userData) => {
     users[userData.userid] = socket.id;
     socket.broadcast.emit("user-joined", JSON.stringify(userData));
-    console.log(users[JSON.stringify(userData) + " new user joined");
+    console.log(JSON.stringify(userData) + " new user joined");
   });
   socket.broadcast.emit("all", { riders: riders, users: users });
 
