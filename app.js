@@ -76,7 +76,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", (reason) => {
-    console.log(reason.userid +"test disconnected");
+    console.log(reason +"test disconnected");
     if (reason.user) {
       console.log(reason.userid +"user disconnected");
       delete users[reason.userid];
