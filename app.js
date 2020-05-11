@@ -15,29 +15,13 @@ io.on("connection", (socket) => {
   //broadcast logged in riders to users
   //users will listen(on) and riders will emit their location data on this channel
   socket.on("new-rider", (riderData) => {
-    riders[riderData.riderid] = socket.id ;
     socket.broadcast.emit("online-riders", riderData);
-    console.log(
-      "new rider joined " +
-        JSON.stringify(riders) +
-        " and socket id is " +
-        riders[riderData.riderid]
-    ); 
   });
 
   // save user details to on the server
   socket.on("new-user", (userData) => {
-    users[userData.userid] = socket.id;
     socket.broadcast.emit("user-joined", JSON.stringify(userData));
-    console.log(
-      JSON.stringify(userData) +
-        " new user joined" +
-        " and socket id is " +
-        users[userData.userid]
-    );
   });
-  socket.broadcast.emit("all", { riders: riders, users: users });
-
   //the user emits a request with th details of the selected rider
   //the rider is then sent an event to accept or decline the rider
   //the rider listens to this event
@@ -51,44 +35,33 @@ io.on("connection", (socket) => {
         "obj" +
         JSON.stringify(riders)
     );
-    socket
-      .to(riders[requestDetails.riderid])
-      .emit("listening-for-requests", requestDetails);
+    socket.broadcast.emit(
+      "listening-for-requests-" + requestDetails.riderid,
+      requestDetails
+    );
   });
-  
+
   //the user listens for a decision from the rider
   socket.on("request-decision", (decisionData) => {
-    console.log(
-      "rider decision" +
-        JSON.stringify(decisionData) +
-        "user socket id " +
-        users[decisionData.userid]
+    console.log("rider decision" + JSON.stringify(decisionData));
+    socket.broadcast.emit(
+      "rider-decision-" + decisionData.userid,
+      decisionData
     );
-    socket.to(users[decisionData.userid]).emit("rider-decision", decisionData);
   });
 
   //if rider accepts the rider we want to send real time tracking data from the rider to the user
 
   socket.on("track-rider", (riderTrackingData) => {
-    socket
-      .to(users[riderTrackingData.userid])
-      .emit("tracking-data", riderTrackingData);
+    socket.broadcast.emit(
+      "tracking-data-" + riderTrackingData.userid,
+      riderTrackingData
+    );
   });
 
-
-  socket.on("exitapp",data=>{
-    if (data.user) {
-      console.log(data.userid +"user disconnected");
-      delete users[data.userid];
-    } else if(data.rider) {
-      console.log(data.riderid +" rider disconnected");
-      delete riders[data.riderid];
-    }
-  })
   // socket.on("disconnect", (reason) => {
   //   console.log(reason +" test disconnected");
-   
-    
+
   // });
 });
 app.use(express.static("src"));
