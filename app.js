@@ -31,9 +31,7 @@ io.on("connection", (socket) => {
       "rider requested from " +
         requestDetails.userid +
         " to " +
-        riders[requestDetails.riderid] +
-        "obj" +
-        JSON.stringify(riders)
+        requestDetails.riderid
     );
     socket.broadcast.emit(
       "listening-for-requests-" + requestDetails.riderid,
