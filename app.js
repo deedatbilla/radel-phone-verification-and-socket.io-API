@@ -33,7 +33,7 @@ io.on("connection", (socket) => {
       JSON.stringify(userData) +
         " new user joined" +
         " and socket id is " +
-        riders[userData.userid]
+        users[userData.userid]
     );
   });
   socket.broadcast.emit("all", { riders: riders, users: users });
