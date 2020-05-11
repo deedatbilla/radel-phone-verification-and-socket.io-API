@@ -85,11 +85,11 @@ io.on("connection", (socket) => {
       delete riders[data.riderid];
     }
   })
-  socket.on("disconnect", (reason) => {
-    console.log(reason +" test disconnected");
+  // socket.on("disconnect", (reason) => {
+  //   console.log(reason +" test disconnected");
    
     
-  });
+  // });
 });
 app.use(express.static("src"));
 app.use(express.json());
