@@ -77,11 +77,13 @@ io.on("connection", (socket) => {
 
   socket.on("disconnect", (reason) => {
     if (reason.userid) {
+      console.log(reason.userid +" disconnected");
       delete users[reason.userid];
     } else {
+      console.log(reason.riderid +" disconnected");
       delete riders[reason.riderid];
     }
-    console.log("logged out");
+    
   });
 });
 app.use(express.static("src"));
