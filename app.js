@@ -55,7 +55,7 @@ io.on("connection", (socket) => {
       .to(riders[requestDetails.riderid])
       .emit("listening-for-requests", requestDetails);
   });
-
+  
   //the user listens for a decision from the rider
   socket.on("request-decision", (decisionData) => {
     console.log(
