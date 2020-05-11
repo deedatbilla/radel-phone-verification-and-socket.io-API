@@ -17,14 +17,24 @@ io.on("connection", (socket) => {
   socket.on("new-rider", (riderData) => {
     riders[riderData.riderid] = socket.id;
     socket.broadcast.emit("online-riders", riderData);
-    console.log("new rider joined " + JSON.stringify(riderData));
+    console.log(
+      "new rider joined " +
+        JSON.stringify(riderData) +
+        " and socket id is " +
+        riders[riderData.riderid]
+    );
   });
- 
+
   // save user details to on the server
   socket.on("new-user", (userData) => {
     users[userData.userid] = socket.id;
     socket.broadcast.emit("user-joined", JSON.stringify(userData));
-    console.log(JSON.stringify(userData) + " new user joined");
+    console.log(
+      JSON.stringify(userData) +
+        " new user joined" +
+        " and socket id is " +
+        riders[riderData.riderid]
+    );
   });
   socket.broadcast.emit("all", { riders: riders, users: users });
 
@@ -48,7 +58,12 @@ io.on("connection", (socket) => {
 
   //the user listens for a decision from the rider
   socket.on("request-decision", (decisionData) => {
-    console.log("rider decision" + JSON.stringify(decisionData));
+    console.log(
+      "rider decision" +
+        JSON.stringify(decisionData) +
+        "user socket id " +
+        users[decisionData.userid]
+    );
     socket.to(users[decisionData.userid]).emit("rider-decision", decisionData);
   });
 
@@ -65,10 +80,10 @@ io.on("connection", (socket) => {
   //     delete users[reason.userid];
   //   } else {
   //     delete riders[reason.riderid];
-  //   } 
+  //   }
   //   console.log("logged out");
   // });
-}); 
+});
 app.use(express.static("src"));
 app.use(express.json());
 app.use(phoneVerificationRouter);
