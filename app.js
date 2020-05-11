@@ -75,14 +75,14 @@ io.on("connection", (socket) => {
       .emit("tracking-data", riderTrackingData);
   });
 
-  // socket.on("disconnect", (reason) => {
-  //   if (reason.userid) {
-  //     delete users[reason.userid];
-  //   } else {
-  //     delete riders[reason.riderid];
-  //   }
-  //   console.log("logged out");
-  // });
+  socket.on("disconnect", (reason) => {
+    if (reason.userid) {
+      delete users[reason.userid];
+    } else {
+      delete riders[reason.riderid];
+    }
+    console.log("logged out");
+  });
 });
 app.use(express.static("src"));
 app.use(express.json());
