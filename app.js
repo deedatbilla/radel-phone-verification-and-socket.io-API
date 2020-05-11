@@ -75,15 +75,19 @@ io.on("connection", (socket) => {
       .emit("tracking-data", riderTrackingData);
   });
 
-  socket.on("disconnect", (reason) => {
-    console.log(reason +"test disconnected");
-    if (reason.user) {
-      console.log(reason.userid +"user disconnected");
-      delete users[reason.userid];
-    } else if(reason.rider) {
-      console.log(reason.riderid +" rider disconnected");
-      delete riders[reason.riderid];
+
+  socket.on("exitapp",data=>{
+    if (data.user) {
+      console.log(data.userid +"user disconnected");
+      delete users[data.userid];
+    } else if(data.rider) {
+      console.log(data.riderid +" rider disconnected");
+      delete riders[data.riderid];
     }
+  })
+  socket.on("disconnect", (reason) => {
+    console.log(reason +" test disconnected");
+   
     
   });
 });
