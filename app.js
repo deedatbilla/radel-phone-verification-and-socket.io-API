@@ -46,6 +46,9 @@ io.on("connection", (socket) => {
       "rider-decision-" + decisionData.userid,
       decisionData
     );
+    if (decisionData.isAvailable) {
+      socket.broadcast.emit("customer-movement-" + decisionData.userid);
+    }
   });
 
   //if rider accepts the rider we want to send real time tracking data from the rider to the user
@@ -56,11 +59,9 @@ io.on("connection", (socket) => {
       riderTrackingData
     );
   });
-
-  // socket.on("disconnect", (reason) => {
-  //   console.log(reason +" test disconnected");
-
-  // });
+  socket.on("disconnet", (reason) => {
+    console.log(reason);
+  });
 });
 app.use(express.static("src"));
 app.use(express.json());
