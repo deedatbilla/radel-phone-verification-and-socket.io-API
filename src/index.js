@@ -15,21 +15,25 @@ router.get("/", (req, res) => {
 
 router.post("/verifyPhone", async (req, res) => {
   try {
-  
+    var code = Math.floor(1000 + Math.random() * 9000);
     const { phone } = req.body;
-    // let verification = await client.messages
-    //   .create({
-    //     body: `Your verification code is ${code}`,
-    //     from: "+17243906302",
+    let verification = await client.messages
+      .create({
+        body: `Your verification code is ${code}`,
+        from: "+17243906302",
+        to: `+233${phone}`,
+      })
+      .then((message) => res.send({ message, code: `${code}` }));
+    // await client.verify
+    //   .services("VAd89e774c5383c1c279a9234fa8b45020")
+    //   .verifications.create({
     //     to: `+233${phone}`,
+    //     channel: "sms",
     //   })
-    //   .then((message) => res.send({ message, code: `${code}` }));
-   await client.verify.services('VAd89e774c5383c1c279a9234fa8b45020')
-             .verifications
-             .create({to: `+233${phone}`, channel: 'sms'})
-             .then(verification => res.send({ verification }));
+    //   .then((verification) =>
+    //     res.send({ verification: verification, code: code })
+    //   );
 
-      
     // .verifications.create({ to: `+233${phone}`, channel: "sms" })
     // .then((verification) => console.log(verification.sid));
   } catch (e) {
