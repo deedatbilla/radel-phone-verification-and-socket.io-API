@@ -57,7 +57,7 @@ io.on("connection", (socket) => {
         riders[requestDetails.riderid] +
         JSON.stringify(riders)
     );
-    socket.broadcast.emit(
+    io.to(riders[requestDetails.riderid]).emit(
       "listening-for-requests",
       requestDetails
     );
