@@ -16,6 +16,11 @@ io.on("connection", (socket) => {
   //broadcast logged in riders to users
   //users will listen(on) and riders will emit their location data on this channel
   socket.on("new-rider", (riderData) => {
+    if (riderData.riderid in riders) {
+      return;
+    }
+    //socket.usernme
+
     riders[riderData.riderid] = socket.id;
     socket.broadcast.emit("online-riders", riderData);
     console.log(
@@ -51,9 +56,10 @@ io.on("connection", (socket) => {
         riders[requestDetails.riderid] +
         JSON.stringify(riders)
     );
-    socket.broadcast
-      .to(riders[requestDetails.riderid])
-      .emit("listening-for-requests", requestDetails);
+    io.to(riders[requestDetails.riderid]).emit(
+      "listening-for-requests",
+      requestDetails
+    );
   });
 
   //the user listens for a decision from the rider
@@ -61,12 +67,10 @@ io.on("connection", (socket) => {
     console.log(
       "rider decision" +
         JSON.stringify(decisionData) +
-        "user socket id " +
+        "user socket id" +
         users[decisionData.userid]
     );
-    socket.broadcast
-      .to(users[decisionData.userid])
-      .emit("rider-decision", decisionData);
+    io.to(users[decisionData.userid]).emit("rider-decision", decisionData);
   });
 
   //if rider accepts the rider we want to send real time tracking data from the rider to the user
