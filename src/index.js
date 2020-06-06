@@ -10,7 +10,7 @@ const client = require("twilio")(
 
 const router = express.Router();
 router.get("/", (req, res) => {
-  res.sendFile("index.html");
+  res.send("welcome ")
 });
 
 router.post("/verifyPhone", async (req, res) => {
