@@ -21,6 +21,7 @@ io.on("connection", (socket) => {
     }
     socket.riderid = riderData.riderid;
     riders[riderData.riderid] = socket.id;
+    console.log(JSON.stringify(riderData) + " new rider joined");
   });
 
   socket.on("rider-movement", (riderData) => {
@@ -35,12 +36,7 @@ io.on("connection", (socket) => {
     socket.userid = userData.userid;
     users[userData.userid] = socket.id;
     socket.broadcast.emit("user-joined", JSON.stringify(userData));
-    console.log(
-      JSON.stringify(userData) +
-        " new user joined" +
-        " and socket id is " +
-        users[userData.userid]
-    );
+    console.log(JSON.stringify(userData) + " new user joined");
   });
   socket.broadcast.emit("all", { riders: riders, users: users });
 
@@ -70,15 +66,18 @@ io.on("connection", (socket) => {
   //if rider accepts the rider we want to send real time tracking data from the rider to the user
 
   socket.on("track-rider", (riderTrackingData) => {
-        socket.broadcast.emit(
-          "tracking-data-" + riderTrackingData.userid,
-          riderTrackingData
-        );
-      });
+    socket.broadcast.emit(
+      "tracking-data-" + riderTrackingData.userid,
+      riderTrackingData
+    );
+  });
 
   socket.on("disconnect", (reason) => {
-    delete riders[socket.riderid];
-    delete users[socket.userid];
+    if (socket.riderid) {
+      delete riders[socket.riderid];
+    } else {
+      delete users[socket.userid];
+    }
     //socket.broadcast.emit()
   });
 });
