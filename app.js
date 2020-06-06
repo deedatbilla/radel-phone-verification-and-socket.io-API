@@ -57,6 +57,10 @@ io.on("connection", (socket) => {
 
   //the user listens for a decision from the rider
   socket.on("request-decision", (decisionData) => {
+    socket.broadcast.emit(
+      "rider-decision-" + decisionData.userid,
+      decisionData
+    );
     if (decisionData.isAvailable) {
       socket.broadcast.emit("customer-movement-" + decisionData.userid);
     }
@@ -75,8 +79,10 @@ io.on("connection", (socket) => {
   socket.on("disconnect", (reason) => {
     if (socket.riderid) {
       delete riders[socket.riderid];
+      console.log(socket.riderid + " rider disconnected");
     } else {
       delete users[socket.userid];
+      console.log(socket.userid + " user disconnected");
     }
     //socket.broadcast.emit()
   });
