@@ -20,6 +20,7 @@ io.on("connection", (socket) => {
       return;
     }
     //socket.usernme
+    socket.username = riderData.riderid;
 
     riders[riderData.riderid] = socket.id;
     socket.broadcast.emit("online-riders", riderData);
@@ -82,12 +83,8 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", (reason) => {
-    // if (reason.userid) {
-    //   delete users[reason.userid];
-    // } else {
-    //   delete riders[reason.riderid];
-    // }
-    // console.log("logged out");
+    delete riders[socket.username];
+    console.log(riders);
   });
 });
 app.use(express.static("src"));
