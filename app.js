@@ -19,21 +19,20 @@ io.on("connection", (socket) => {
     if (riderData.riderid in riders) {
       return;
     }
-    //socket.usernme
-    socket.username = riderData.riderid;
-
+    socket.riderid = riderData.riderid;
     riders[riderData.riderid] = socket.id;
+  });
+
+  socket.on("rider-movement", (riderData) => {
     socket.broadcast.emit("online-riders", riderData);
-    console.log(
-      "new rider joined " +
-        JSON.stringify(riders) +
-        " and socket id is " +
-        riders[riderData.riderid]
-    );
   });
 
   // save user details  on the server
   socket.on("new-user", (userData) => {
+    if (userData.userid in users) {
+      return;
+    }
+    socket.userid = userData.userid;
     users[userData.userid] = socket.id;
     socket.broadcast.emit("user-joined", JSON.stringify(userData));
     console.log(
@@ -50,41 +49,37 @@ io.on("connection", (socket) => {
   //the rider listens to this event
   //this request data should include the users unique id so that he can get a reply
   socket.on("request-ride", (requestDetails) => {
-    console.log(
-      "rider requested from " +
-        requestDetails.userid +
-        " to " +
-        riders[requestDetails.riderid] +
-        JSON.stringify(riders)
-    );
-    io.to(riders[requestDetails.riderid]).emit(
-      "listening-for-requests",
+    socket.broadcast.emit(
+      "listening-for-requests-" + requestDetails.riderid,
       requestDetails
     );
+    // io.to(riders[requestDetails.riderid]).emit(
+    //   "listening-for-requests",
+    //   requestDetails
+    // );
   });
 
   //the user listens for a decision from the rider
   socket.on("request-decision", (decisionData) => {
-    console.log(
-      "rider decision" +
-        JSON.stringify(decisionData) +
-        "user socket id" +
-        users[decisionData.userid]
-    );
-    io.to(users[decisionData.userid]).emit("rider-decision", decisionData);
+    if (decisionData.isAvailable) {
+      socket.broadcast.emit("customer-movement-" + decisionData.userid);
+    }
+    //io.to(users[decisionData.userid]).emit("rider-decision", decisionData);
   });
 
   //if rider accepts the rider we want to send real time tracking data from the rider to the user
 
   socket.on("track-rider", (riderTrackingData) => {
-    socket
-      .to(users[riderTrackingData.userid])
-      .emit("tracking-data", riderTrackingData);
-  });
+        socket.broadcast.emit(
+          "tracking-data-" + riderTrackingData.userid,
+          riderTrackingData
+        );
+      });
 
   socket.on("disconnect", (reason) => {
-    delete riders[socket.username];
-    console.log(riders);
+    delete riders[socket.riderid];
+    delete users[socket.userid];
+    //socket.broadcast.emit()
   });
 });
 app.use(express.static("src"));
