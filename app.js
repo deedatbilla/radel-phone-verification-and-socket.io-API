@@ -26,6 +26,7 @@ io.on("connection", (socket) => {
 
   socket.on("rider-movement", (riderData) => {
     socket.broadcast.emit("online-riders", riderData);
+    console.log(JSON.stringify(riderData))
   });
 
   // save user details  on the server
